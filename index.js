@@ -4,17 +4,31 @@ const searchBtn = document.querySelector("#search-btn");
 
 let movieListArray = [];
 document.addEventListener("click", (e) => {
-    if(e.target.dataset.movie) {
-         addToWatchList(e.target.dataset.movie);
-    }
+  if (e.target.dataset.movie) {
+    addToWatchList(e.target.dataset.movie);
+  }
+});
 
-})
+function addToWatchList(movie) {
+  let watchlist = localStorage.getItem("watchlist");
 
+  const tempMovie = movieListArray.find(
+    (movieItem) => movieItem.imdbID === movie
+  );
 
-function addToWatchList(movies) {
+  if (!watchlist) {
+    localStorage.setItem("watchlist", JSON.stringify([tempMovie]));
+  } else {
+    watchlist = JSON.parse(watchlist);
+    watchlist.push(tempMovie);
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+  }
+
+  /*
+  const array =
    localStorage.setItem("watchlist", JSON.stringify(movieListArray))
-   
- }
+   */
+}
 
 // const addToWatchList = (e) => {
 //    console.log(JSON.parse(e));
@@ -31,9 +45,7 @@ searchBtn.addEventListener("click", () => {
   fetch(`http://www.omdbapi.com/?apikey=abad75d5&t=${input}`)
     .then((res) => res.json())
     .then((data) => {
-
       movieListArray.unshift(data);
-    
 
       let movies = movieListArray.map((movie) => {
         return `<div class="movie-list-container" >
@@ -49,7 +61,7 @@ searchBtn.addEventListener("click", () => {
                 <div class="movie-details">
                     <p class="run-time">${movie.Runtime}</p>
                     <p class="genre">${movie.Genre}</p>
-                    <p onclick="addToWatchList(JSON.stringify('${movie}'))" data-movie="${movie.imdbID}" class="watchlist-add-btn"><span class="watchlist-icon"><i class="fa-solid fa-circle-plus"></i></span>Watchlist</p>
+                    <p data-movie="${movie.imdbID}" class="watchlist-add-btn"><span class="watchlist-icon"><i class="fa-solid fa-circle-plus"></i></span>Watchlist</p>
                 </div>
                 <div class="synopsis-container">
                      <p class="synopsis">${movie.Plot}</p>
@@ -63,12 +75,12 @@ searchBtn.addEventListener("click", () => {
 
       inputValue.value = "";
 
-    //   const watchListButtons = document.querySelectorAll(".watchlist-add-btn");
-    //       console.log(watchListButtons, "BUTTONS >>>>>>>>>>>>>>>>>>>");
-    //   watchListButtons.forEach((selector) => {
-    //     console.log(selector)
-    //     selector.addEventListener("click", addToWatchList);
-    //   });
+      //   const watchListButtons = document.querySelectorAll(".watchlist-add-btn");
+      //       console.log(watchListButtons, "BUTTONS >>>>>>>>>>>>>>>>>>>");
+      //   watchListButtons.forEach((selector) => {
+      //     console.log(selector)
+      //     selector.addEventListener("click", addToWatchList);
+      //   });
     });
 });
 
